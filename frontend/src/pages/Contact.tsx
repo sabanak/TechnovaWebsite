@@ -18,8 +18,7 @@ const Contact = () => {
         setLoading(true);
 
         try {
-            await axios.post('https://technovasol.pythonanywhere.com/api/contact/', formData, {
-                headers: { 'Content-Type': 'application/json' }
+            await axios.post('https://technovasol.pythonanywhere.com/api/contact/', formData);
             });
             toast.success('Message sent successfully! We\'ll respond within 24 hours.');
             setFormData({ name: '', email: '', message: '' });
