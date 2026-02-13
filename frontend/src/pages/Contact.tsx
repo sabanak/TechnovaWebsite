@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -17,13 +16,20 @@ const Contact = () => {
         e.preventDefault();
         setLoading(true);
 
+        // ✅ FIX: Create FormData (NOT plain object)
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('email', formData.email);
+        data.append('message', formData.message);
+
         try {
-            await axios.post('https://technovasol.pythonanywhere.com/api/contact/', formData);
-            });
+            // ✅ CORRECT PythonAnywhere URL
+            await axios.post('https://technovasol.pythonanywhere.com/api/contact/', data);
             toast.success('Message sent successfully! We\'ll respond within 24 hours.');
             setFormData({ name: '', email: '', message: '' });
         } catch (error: any) {
-            toast.error(error.response?.data?.error || 'Failed to send message.');
+            console.error('Contact form error:', error);
+            toast.error(error.response?.data?.error || 'Failed to send message. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -31,7 +37,7 @@ const Contact = () => {
 
     return (
         <div className="min-h-screen py-12 sm:py-16 lg:py-24 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-            {/* Hero - BALANCED SIZES */}
+            {/* Hero */}
             <section className="text-center mb-12 sm:mb-16 lg:mb-24 px-4 sm:px-6">
                 <div className="max-w-4xl mx-auto">
                     <motion.h1
@@ -89,8 +95,8 @@ const Contact = () => {
                                     <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white mb-2">
                                         Call Us
                                     </h3>
-                                    <a href="tel:+919876543210" className="text-base sm:text-lg lg:text-xl text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
-                                        +91 9207431259
+                                    <a href="mailto:+919876543210" className="text-base sm:text-lg lg:text-xl text-emerald-600 hover:text-emerald-700 font-semibold transition-colors">
+                                        +91 9876543210
                                     </a>
                                 </div>
                             </div>
@@ -143,6 +149,7 @@ const Contact = () => {
                                     className="w-full p-4 sm:p-5 lg:p-6 text-base sm:text-lg border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 placeholder-gray-500"
                                     placeholder="Your full name"
                                     required
+                                    disabled={loading}
                                 />
                             </div>
 
@@ -158,6 +165,7 @@ const Contact = () => {
                                     className="w-full p-4 sm:p-5 lg:p-6 text-base sm:text-lg border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 placeholder-gray-500"
                                     placeholder="your@email.com"
                                     required
+                                    disabled={loading}
                                 />
                             </div>
 
@@ -173,6 +181,7 @@ const Contact = () => {
                                     className="w-full p-4 sm:p-5 lg:p-6 text-base sm:text-lg border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm focus:ring-4 focus:ring-primary/20 focus:border-primary resize-vertical transition-all duration-300 placeholder-gray-500 min-h-[120px]"
                                     placeholder="Tell us about your project requirements..."
                                     required
+                                    disabled={loading}
                                 />
                             </div>
 
